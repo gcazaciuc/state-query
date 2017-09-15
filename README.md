@@ -51,22 +51,22 @@ The API surface should be minimal.
 All state management will be accomplished using 5 API functions:
 
 1. `query` -> defines a query
-2. `mutation` -> defines a mutation
-3. `schema` -> Defines a schema for a table
-3. `run` -> executes a query or a mutation
-4. `sync` - performs side effects by synchronizing a table using pluggable drivers: make requests, local storage etc.
+2. `run` -> executes a query or a mutation
 
 Framework specific bindings to the state management layer should reside in a separate package, eg `state-query-react`, `state-query-angular` etc.
 
+Side effects will be separate into a `state-query-effects` package.
 
 ### Proposed usage
 
 ### Define a schema for virtual 'tables' which will hold data and define side effects
 ```js
 
-import { schema, run } from 'state-query';
+import { query, run } from 'state-query';
+// Side effects adapters go in a separate package
+import { effects, restEffect, localStorageEffect } from 'state-query-effects';
 
-export const createUsersTableSchema = schema`create table users (
+export const createUsersTableSchema = query`create table users (
     user_id int,
     last_name varchar(255),
     first_name varchar(255),
@@ -74,14 +74,24 @@ export const createUsersTableSchema = schema`create table users (
     city varchar(255) 
 )`
 
-run(createUsersTableQuery);
-// Upon changing the users table auto sync it with a REST API and local stoage
-sync(createUsersTableSchema, restAdapter({
-    url: '/users'
-}), localStorageAdapter({
-    key: 'users'
-}));
+const userRestEffect = restEffect({
+    // url is optional, defaults to the table name
+    url: '/users',
+    // map is optional, allows transforming the data before calling out the API
+    map: (userRecord) => userApiRecord
+});
 
+const userLocalStorageEffect = localStorageEffect({
+    // key is optional, defaults to the table name
+    key: 'users'
+});
+
+// Upon changing the users table auto sync it with a REST API and local storage
+// You can have as many or less effects in here. And YOU can write your own!!
+effects(createUsersTableSchema, userRestAdapter, userLocalStorageAdapter);
+
+//  Bootstrap the state management engine
+run(createUsersTableQuery, [createProfileTableQuery], ....);
 ```
 
 The adapter can be provided independently of the `state-query` lib and can be created also by the users to acomplish custom effects and have
@@ -94,14 +104,16 @@ Based on the schema, data will be validated upon insertion, update etc.
 `SQL` is already a super well know, DECLARATIVE, query language. The proposed API aims at using a small subset of SQL
 to **describe** the data needs of a component and **describe** the changes that need to be performed(insert, delete, update).
 
-Any kind of data needs should be accomplished by 2 types of operations: `queries` or `mutations`.
-Defining these should be natural adn the proposed API uses 2 tagged template literals which are very well supported in existing browsers( for a description of tagged template literals see
+Any kind of data needs should be accomplished by 2 types of operations: queries or mutations.
+Defining these should be natural adn the proposed API uses 1 tagged template literal(``query`) which are very well supported in existing browsers( for a description of tagged template literals see
 https://medium.freecodecamp.org/es6-tagged-template-literals-48a70ef3ed4d ):
 
 ```js 
     const getAllUsers = query`select * from users`;
-    const deleteUser = mutation`delete from users where user_id=${(props) => props.userId}` 
+    const deleteUser = query`delete from users where user_id = :user_id` 
 ```
+
+`:user_id` in the example above, is called a query param and it must be bound to a real value before being able to actually execute the Query.
 
 Tagged template literals will be used in a similar manner to how [Styled components](https://www.styled-components.com/) use them.
 
@@ -111,14 +123,14 @@ Assuming we have the following queries defined:
 
 ```js
 // Queries.js
-const getAllUsers =  query`select * from users`;
+const getAllUsers =  query`select * from users where user_id = :userId`;
 const getUIState = query`select isOpen from users_list_ui`;
 ```
 And the following mutations:
 
 ```js
 // Mutations.js
-const deleteUser = mutation`delete from users where user_id=${(props) => props.userId}`
+const deleteUser = query`delete from users where user_id = :user_id`
 ```
 
 And a component that uses these queries and mutations
@@ -132,11 +144,11 @@ import { component } from 'state-query-react';
 @component({
     users:  getAllUsers,
     isDropdownOpen: getUIState
-    onDeleteUSer: deleteUser,
+    onDeleteUSer: deleteUser // The decorator takes care of bounding :user_id query param to the proper value when the event handler was invoked or to the props(eg looks for props.user_id)
 })
 class UsersList extends React.Component {
     onDeleteUser(ev) {
-        this.props.deleteUser(ev.data.id);
+        this.props.deleteUser({ user_id: ev.data.id );
     }
     render() {
         <ul>{
@@ -146,6 +158,12 @@ class UsersList extends React.Component {
     }
 }
 ```
+
+And it's used like this:
+```js
+    <UsersList userId={1} >
+```
+Notice how the `userId` prop is automatically bound to the ':user_id' var in `getAllUsers`('@component' takes care of that).
 
 Points to note:
 
