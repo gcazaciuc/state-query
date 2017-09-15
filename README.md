@@ -66,13 +66,20 @@ import { query, run } from 'state-query';
 // Side effects adapters go in a separate package
 import { effects, restEffect, localStorageEffect } from 'state-query-effects';
 
-export const createUsersTableSchema = query`create table users (
+const usersSchema = query`create table users (
     user_id int,
     last_name varchar(255),
     first_name varchar(255),
     address varchar(255),
-    city varchar(255) 
+    city varchar(255),
+    profile_id int
 )`
+
+const profileSchema = query`create table profile (
+    profile_id int,
+    bio varchar(255)
+)`;
+
 
 const userRestEffect = restEffect({
     // url is optional, defaults to the table name
@@ -88,10 +95,10 @@ const userLocalStorageEffect = localStorageEffect({
 
 // Upon changing the users table auto sync it with a REST API and local storage
 // You can have as many or less effects in here. And YOU can write your own!!
-effects(createUsersTableSchema, userRestAdapter, userLocalStorageAdapter);
+effects(usersSchema, userRestAdapter, userLocalStorageAdapter);
 
-//  Bootstrap the state management engine
-run(createUsersTableQuery, [createProfileTableQuery], ....);
+//  Bootstrap the state management engine. It creates a 'virtual' database holding these tables
+run(usersSchema, profileSchema);
 ```
 
 The adapter can be provided independently of the `state-query` lib and can be created also by the users to acomplish custom effects and have
