@@ -98,10 +98,8 @@ Any kind of data needs should be accomplished by 2 types of operations: `queries
 Defining these should be natural adn the proposed API uses 2 tagged template literals which are very well supported in existing browsers( for a description of tagged template literals see
 https://medium.freecodecamp.org/es6-tagged-template-literals-48a70ef3ed4d ):
 
-* ```js 
+```js 
     const getAllUsers = query`select * from users`;
-    ```
-* ```js 
     const deleteUser = mutation`delete from users where user_id=${(props) => props.userId}` 
 ```
 
