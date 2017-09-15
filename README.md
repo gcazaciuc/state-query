@@ -8,7 +8,7 @@ to manipulate that state(eg think Redux reducers, selectors, sagas, thunks etc) 
 
 Also, most of them, don't tackle at all the problem of component local state.
 
-Besides that I would really like if there was a state management solution that could handle component local state with elegance.
+If you believe we've reached the climax in terms of state management elegance and reliability, if you believe everything has been discovered, explored and the state management landscpae is at it's best, then this solution is probably not for you.
 
 
 ## Design goals
@@ -18,11 +18,11 @@ Besides that I would really like if there was a state management solution that c
 * View layer agnostic: works with React, Preact and any other virtual DOM solution
 * Pluggable drivers for syncing state contents: sync with Restfull APIs, local storage etc
 * Fully traceable and replayable actions and state
-* Minimum boilerplate
+* Minimum boilerplate - minimum API surface, get started in 30 secs approach
 * Fractal architecture: It should compose well as the components it provides data to are integrated into larger components/apps
-* Local(UI) state management
+* Local(UI) state management - Should be trivial to extract and manage component local state into global state
 * Access to data results is fully asynchronous: the client is oblivious whether the data is local or on some remote server in the other part of the world
-* Usefull, strong typing capabilities in dev, without having the developer commited to Typescript/Flow etc
+* Usefull, strong typing capabilities in dev, without having the developer commited to Typescript/Flow etc. or requiring additional effort from developer side.
 * Immutable oriented, explicit state updates
 
 We borrow liberaly ideas from:
@@ -33,10 +33,15 @@ We borrow liberaly ideas from:
 4. Event sourcing
 5. And of course functional reactive programming approaches
 
-The basic idea is to describe the data, the reads(queries) and the writes(mutations) using a declarative language.
-The queries will all be reactive and the UI components update automatically as the queries result change in real-time.
+We model the UI state as a local database, made up of tables containing various pieces of information: entities retrieved from a server, components local state etc.
 
-We synchronize in a declarative manner the data with remote endpoints(eg REST endpoint) or local data stores( eg save in localStorage).
+The basic idea is to describe the data, the reads(queries) and the writes(mutations) using a declarative language.
+
+Components can make use of this of this declarative language to declare their data dependencies and data mutations they would like to perform.
+
+The queries will all be **reactive** and the UI components update automatically as the queries result change in real-time.
+
+We perform side effects in a declarative manner: eg we sync the data with remote endpoints(eg REST endpoint) or local data stores( eg save in localStorage) or in any user defined way via pluggable adapters(provided by the framewor, third party or user defined).
 
 ## API design ideas
 
