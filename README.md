@@ -1,14 +1,14 @@
 # state-query
 A declarative and functional state management solution
 
-STATE is the number one enemy of reliable apps, eg see the famous [Out of the Tar Pit paper](http://curtclifton.net/papers/MoseleyMarks06a.pdf). 
+**State** is the number one enemy of reliable apps, eg see the famous [Out of the Tar Pit paper](http://curtclifton.net/papers/MoseleyMarks06a.pdf). 
 
 However, existing state management solutions are either to tied to a specific framework, need a whole lot of other pieces to be able
 to manipulate that state(eg think Redux reducers, selectors, sagas, thunks etc) or are downright incomplete.
 
 Also, most of them, don't tackle at all the problem of component local state.
 
-If you believe we've reached the climax in terms of state management elegance and reliability, if you believe everything has been discovered, explored and the state management landscpae is at it's best, then this solution is probably not for you.
+If you believe we've reached the climax in terms of state management elegance and reliability, if you believe everything has been discovered, explored and the state management landscape is at it's best, then this solution is probably not for you.
 
 
 ## Design goals
@@ -98,8 +98,12 @@ Any kind of data needs should be accomplished by 2 types of operations: `queries
 Defining these should be natural adn the proposed API uses 2 tagged template literals which are very well supported in existing browsers( for a description of tagged template literals see
 https://medium.freecodecamp.org/es6-tagged-template-literals-48a70ef3ed4d ):
 
-* const getAllUsers = query`select * from users`;
-* const deleteUser = mutation`delete from users where user_id=${(props) => props.userId}`
+* ```js 
+    const getAllUsers = query`select * from users`;
+    ```
+* ```js 
+    const deleteUser = mutation`delete from users where user_id=${(props) => props.userId}` 
+```
 
 Tagged template literals will be used in a similar manner to how [Styled components](https://www.styled-components.com/) use them.
 
@@ -150,3 +154,7 @@ Points to note:
 1. The component will not be rendered until the required data is available
 2. The queries should be **reactive** - when new data is added/deleted/updated in users table the component that uses it should update
 3. The decorator can inject info about the loading state of the data(eg whether done or not) so the UI can update and show a spinner
+
+## How can we improve this API ? What's the ideal solution for state management in your view ?
+
+Please file an issue and let me know your ideas!
