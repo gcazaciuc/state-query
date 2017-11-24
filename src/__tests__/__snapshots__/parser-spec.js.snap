@@ -1,0 +1,172 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`State Query SQL parser suite Should parse SQL create table statements 1`] = `
+Array [
+  Object {
+    "columns": Array [
+      Object {
+        "alias": "userId",
+        "data": Array [
+          "int",
+        ],
+        "name": "userId",
+        "type": "col",
+      },
+      null,
+    ],
+    "name": Array [
+      "users",
+    ],
+    "type": "create_table",
+  },
+]
+`;
+
+exports[`State Query SQL parser suite Should parse SQL statements with existential operator in it 1`] = `
+Array [
+  Object {
+    "clauses": null,
+    "cols": Object {
+      "cols": Array [
+        "*",
+      ],
+      "type": "columnList",
+    },
+    "from": Object {
+      "tables": Array [
+        "table",
+      ],
+      "type": "from",
+    },
+    "type": "select",
+  },
+]
+`;
+
+exports[`State Query SQL parser suite Should parse SQL statements with where clauses in it - both members are identifiers 1`] = `
+Array [
+  Object {
+    "clauses": Array [
+      Array [
+        Object {
+          "clauses": Object {
+            "left": "col",
+            "operator": ">",
+            "right": "x",
+            "type": "binaryExpression",
+          },
+          "type": "where",
+        },
+      ],
+    ],
+    "cols": Object {
+      "cols": Array [
+        Object {
+          "alias": "col",
+          "name": "col",
+          "type": "column",
+        },
+      ],
+      "type": "columnList",
+    },
+    "from": Object {
+      "tables": Array [
+        "table",
+      ],
+      "type": "from",
+    },
+    "type": "select",
+  },
+]
+`;
+
+exports[`State Query SQL parser suite Should parse SQL statements with where clauses in it - one member is a number literal 1`] = `
+Array [
+  Object {
+    "clauses": Array [
+      Array [
+        Object {
+          "clauses": Object {
+            "left": "col",
+            "operator": ">",
+            "right": Array [
+              Array [
+                "5",
+              ],
+            ],
+            "type": "binaryExpression",
+          },
+          "type": "where",
+        },
+      ],
+    ],
+    "cols": Object {
+      "cols": Array [
+        Object {
+          "alias": "col",
+          "name": "col",
+          "type": "column",
+        },
+      ],
+      "type": "columnList",
+    },
+    "from": Object {
+      "tables": Array [
+        "table",
+      ],
+      "type": "from",
+    },
+    "type": "select",
+  },
+]
+`;
+
+exports[`State Query SQL parser suite Should parse simple SQL statements 1`] = `
+Array [
+  Object {
+    "clauses": null,
+    "cols": Object {
+      "cols": Array [
+        Object {
+          "alias": "col",
+          "name": "col",
+          "type": "column",
+        },
+      ],
+      "type": "columnList",
+    },
+    "from": Object {
+      "tables": Array [
+        "table",
+      ],
+      "type": "from",
+    },
+    "type": "select",
+  },
+]
+`;
+
+exports[`State Query SQL parser suite Should parse simple SQL statements when keyword are lower-case 1`] = `
+Array [
+  Object {
+    "clauses": null,
+    "cols": Object {
+      "cols": Array [
+        Object {
+          "alias": "col",
+          "name": "col",
+          "type": "column",
+        },
+      ],
+      "type": "columnList",
+    },
+    "from": Object {
+      "tables": Array [
+        "table",
+      ],
+      "type": "from",
+    },
+    "type": "select",
+  },
+]
+`;
